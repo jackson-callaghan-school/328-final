@@ -77,6 +77,7 @@ def npeaks_win(window):
     ind, _ = find_peaks(mag, height=np.mean(mag)+1, prominence=1)
     return len(ind)
 
+
 def freq_peak_win(window):
     """Return a list of frequencies which appear as peaks in fft of the window
 
@@ -93,6 +94,21 @@ def freq_peak_win(window):
     else:
         return [rsig[i] for i in ind]
 
-# TODO 2nd order butterworth highpass
+
+def butter2h_win(window):
+    """Return the window passed through a 2nd-order butterworth high-pass.
+    """
+    # parameters
+    order = 2
+    fs = 100000  # maybe wrong
+    cutoff = 5  # TODO needs to be dialed in
+    # filter
+    nyq = 0.5 * fs
+    normal_cuttoff = cutoff / nyq
+    b, a = butter(order, normal_cuttoff, btype='high', analog=False)
+
+    return (filtfilt(b, a, window[0]),
+            filtfilt(b, a, window[1]),
+            filtfilt(b, a, window[2]))  # possible done incorrectly
 
 # TODO feature extract function to pull everything together
