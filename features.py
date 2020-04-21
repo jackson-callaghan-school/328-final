@@ -7,6 +7,8 @@ data window, agnostic of size and method of delivery.
 import numpy as np
 import math
 import scipy.stats as st
+from scipy.signal import butter, freqz, filtfilt, firwin, iirnotch, lfilter
+from scipy.signal import find_peaks
 
 
 def mag_win(window):
@@ -60,8 +62,37 @@ def entropy_win(window):
 
     return -entropy
 
-# TODO 2nd-order butterworth high-pass
 
-# TODO other features from activity detection project
+def max_mag_win(window):
+    """Compute the maximum magnitude in the window
+    """
+    mag = mag_win(window)
+    return np.amax(mag)
+
+
+def npeaks_win(window):
+    """Compute the number of peaks in the window
+    """
+    mag = mag_win(window)
+    ind, _ = find_peaks(mag, height=np.mean(mag)+1, prominence=1)
+    return len(ind)
+
+def freq_peak_win(window):
+    """Return a list of frequencies which appear as peaks in fft of the window
+
+    Returns an empty list if there are no peaks.
+    """
+    mag = mag_win(window)
+
+    sig = np.fft.rfft(mag, axis=0)
+    rsig = sig.real.astype(float)
+    ind, _ = find_peaks(rsig, prominence=1)
+
+    if len(ind) == 0:
+        return []
+    else:
+        return [rsig[i] for i in ind]
+
+# TODO 2nd order butterworth highpass
 
 # TODO feature extract function to pull everything together
