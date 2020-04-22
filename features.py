@@ -78,7 +78,7 @@ def npeaks_win(window):
     return len(ind)
 
 
-def freq_peak_win(window):
+def fft_npeak_win(window):
     """Return a list of frequencies which appear as peaks in fft of the window
 
     Returns an empty list if there are no peaks.
@@ -89,10 +89,7 @@ def freq_peak_win(window):
     rsig = sig.real.astype(float)
     ind, _ = find_peaks(rsig, prominence=1)
 
-    if len(ind) == 0:
-        return []
-    else:
-        return [rsig[i] for i in ind]
+    return len(ind)
 
 
 def butter2h_win(window):
@@ -112,3 +109,50 @@ def butter2h_win(window):
             filtfilt(b, a, window[2]))  # possible done incorrectly
 
 # TODO feature extract function to pull everything together
+
+
+def extract_features(window):
+    x = []
+    feature_names = []
+
+    x.append(mean_win(window))
+    feature_names.append("x_mean")
+    feature_names.append("y_mean")
+    feature_names.append("z_mean")
+
+    x.append(median_win(window))
+    feature_names.append("x_med")
+    feature_names.append("y_med")
+    feature_names.append("z_med")
+
+    x.append(stdev_win(window))
+    feature_names.append("x_stdev")
+    feature_names.append("y_stdev")
+    feature_names.append("z_stdev")
+
+    x.append(mean_win(mag_win(window)))
+    x.append(median_win(mag_win(window)))
+    x.append(stdev_win(mag_win(window)))
+    feature_names.append("mag_mean")
+    feature_names.append("mag_med")
+    feature_names.append("mag_stdev")
+
+    x.append(max_mag_win(window))
+    feature_names.append("mag_max")
+
+    x.append(entropy_win(window))
+    feature_names.append("entropy")
+
+    x.append(npeaks_win(window))
+    feature_names.append("npeaks")
+
+    x.append(fft_npeak_win(window))
+    feature_names.append("fft_npeaks")
+
+    # add any other features here
+    # I didn't do anything with the butterworth filter
+    # might be worth running its output into other features
+
+    feature_vector = np.concatenate(x, axis=0)
+
+    return feature_names, feature_vector
