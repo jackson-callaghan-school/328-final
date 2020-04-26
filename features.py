@@ -122,7 +122,7 @@ def extract_features(window):
     # accelerometer
 
     x.append(mean_win(window_a))
-    feature_names.append("x_mean_a_g")
+    feature_names.append("x_mean_a")
     feature_names.append("y_mean_a")
     feature_names.append("z_mean_a")
 
@@ -195,9 +195,18 @@ def extract_features(window):
     # I didn't do anything with the butterworth filter
     # might be worth running its output into other features
 
-    # create feature vector
-    feature_vector = x[0]
-    for feature in x[1:]:
-        feature_vector = np.append(feature_vector, feature)
+    # slightly better method
+    feature_vector = np.hstack(x)
+    # feature_vector = np.append(feature_vector, x[1:])
+    # for feature in x[1:]:
+    #     feature_vector = np.append(feature_vector, feature)
+    #     # if type(feature) == list:
+    #     #     for f in feature:
+    #     #         feature_vector = np.append
+
+    # debug
+    # for i, f in enumerate(feature_names):
+    #     print("{}: {}".format(f, feature_vector[i]))
+    # exit()
 
     return feature_names, feature_vector
