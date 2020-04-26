@@ -113,8 +113,8 @@ def butter2h_win(window):
 
 def extract_features(window):
 
-    window_a = window[0:3]
-    window_g = window[3:6]
+    window_a = [[a_x, a_y, a_z] for a_x, a_y, a_z, g_x, g_y, g_z in window]
+    window_g = [[g_x, g_y, g_z] for a_x, a_y, a_z, g_x, g_y, g_z in window]
 
     x = []
     feature_names = []
