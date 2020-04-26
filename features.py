@@ -112,42 +112,84 @@ def butter2h_win(window):
 
 
 def extract_features(window):
+
+    window_a = window[0:3]
+    window_g = window[3:6]
+
     x = []
     feature_names = []
 
-    x.append(mean_win(window))
-    feature_names.append("x_mean")
-    feature_names.append("y_mean")
-    feature_names.append("z_mean")
+    # accelerometer
 
-    x.append(median_win(window))
-    feature_names.append("x_med")
-    feature_names.append("y_med")
-    feature_names.append("z_med")
+    x.append(mean_win(window_a))
+    feature_names.append("x_mean_a_g")
+    feature_names.append("y_mean_a")
+    feature_names.append("z_mean_a")
 
-    x.append(stdev_win(window))
-    feature_names.append("x_stdev")
-    feature_names.append("y_stdev")
-    feature_names.append("z_stdev")
+    x.append(median_win(window_a))
+    feature_names.append("x_med_a")
+    feature_names.append("y_med_a")
+    feature_names.append("z_med_a")
 
-    x.append(mean_win(mag_win(window)))
-    x.append(median_win(mag_win(window)))
-    x.append(stdev_win(mag_win(window)))
-    feature_names.append("mag_mean")
-    feature_names.append("mag_med")
-    feature_names.append("mag_stdev")
+    x.append(stdev_win(window_a))
+    feature_names.append("x_stdev_a")
+    feature_names.append("y_stdev_a")
+    feature_names.append("z_stdev_a")
 
-    x.append(max_mag_win(window))
-    feature_names.append("mag_max")
+    x.append(mean_win(mag_win(window_a)))
+    x.append(median_win(mag_win(window_a)))
+    x.append(stdev_win(mag_win(window_a)))
+    feature_names.append("mag_mean_a")
+    feature_names.append("mag_med_a")
+    feature_names.append("mag_stdev_a")
 
-    x.append(entropy_win(window))
-    feature_names.append("entropy")
+    x.append(max_mag_win(window_a))
+    feature_names.append("mag_max_a")
 
-    x.append(npeaks_win(window))
-    feature_names.append("npeaks")
+    x.append(entropy_win(window_a))
+    feature_names.append("entropy_a")
 
-    x.append(fft_npeak_win(window))
-    feature_names.append("fft_npeaks")
+    x.append(npeaks_win(window_a))
+    feature_names.append("npeaks_a")
+
+    x.append(fft_npeak_win(window_a))
+    feature_names.append("fft_npeaks_a")
+
+    # gyroscope features
+
+    x.append(mean_win(window_g))
+    feature_names.append("x_mean_g")
+    feature_names.append("y_mean_g")
+    feature_names.append("z_mean_g")
+
+    x.append(median_win(window_g))
+    feature_names.append("x_med_g")
+    feature_names.append("y_med_g")
+    feature_names.append("z_med_g")
+
+    x.append(stdev_win(window_g))
+    feature_names.append("x_stdev_g")
+    feature_names.append("y_stdev_g")
+    feature_names.append("z_stdev_g")
+
+    x.append(mean_win(mag_win(window_g)))
+    x.append(median_win(mag_win(window_g)))
+    x.append(stdev_win(mag_win(window_g)))
+    feature_names.append("mag_mean_g")
+    feature_names.append("mag_med_g")
+    feature_names.append("mag_stdev_g")
+
+    x.append(max_mag_win(window_g))
+    feature_names.append("mag_max_g")
+
+    x.append(entropy_win(window_g))
+    feature_names.append("entropy_g")
+
+    x.append(npeaks_win(window_g))
+    feature_names.append("npeaks_g")
+
+    x.append(fft_npeak_win(window_g))
+    feature_names.append("fft_npeaks_g")
 
     # add any other features here
     # I didn't do anything with the butterworth filter
