@@ -195,6 +195,9 @@ def extract_features(window):
     # I didn't do anything with the butterworth filter
     # might be worth running its output into other features
 
-    feature_vector = np.concatenate(x, axis=0)
+    # create feature vector
+    feature_vector = x[0]
+    for feature in x[1:]:
+        feature_vector = np.append(feature_vector, feature)
 
     return feature_names, feature_vector
