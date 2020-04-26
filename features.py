@@ -41,7 +41,7 @@ def median_win(window):
 def stdev_win(window):
     """Compute the standard deviation of x, y, and z over window.
     """
-    return np.std(mag_win(window), axis=0)
+    return np.std(window, axis=0)
 
 
 def entropy_win(window):
