@@ -87,6 +87,8 @@ while 1:
         data = info.split(",")
         # print(data)
         if len(data) > 20:
+            # The purpose of random.uniform() is to give some random noise to
+            # our location so that we are not giving away our exact location for the demo.
             latitude = float(data[2].strip()) + random.uniform(-2, 2)
             longitude = float(data[3].strip()) + random.uniform(-2, 2)
             print("Found new location.")
