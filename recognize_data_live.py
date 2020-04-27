@@ -1,10 +1,13 @@
 import socket, sys
-
+import random
 import threading
 import numpy as np
 import pickle
 from features import extract_features
 from util import reorient, reset_vars
+import datetime
+import webbrowser
+
 
 host = ''
 port = 5555
@@ -25,13 +28,20 @@ if classifier == None:
 
 
 def onActivityDetected(activity):
+    global last_fall, latitude, longitude
     """
     Notifies the user of the current activity
     """
     
-    # if detected_activity == "falling":
-        # print("Detected ")
-    
+    if activity == "falling":
+        print("Detected Falling")
+        fall_time = datetime.datetime.now()
+        print("Seconds since", (fall_time - last_fall).total_seconds())
+        if (fall_time - last_fall).total_seconds() > 5:
+            url = "https://www.google.com/maps?q="+str(latitude)+"%2C+" + str(longitude)
+            url_enhanced = 'data:text/html,<script>if (confirm("A fall was detected. Click OK to see their location.")) {window.open("'+url+'","_self")}</script>'
+            webbrowser.get("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s").open(url_enhanced)
+        last_fall = fall_time
     print("Detected activity:" + activity)
 
 
@@ -64,6 +74,9 @@ window_size = 100  # ~1 sec assuming 100 Hz sampling rate
 step_size = 100  # no overlap
 index = 0  # to keep track of how many samples we have buffered so far
 reset_vars()  # resets orientation variables
+latitude = 0
+longitude = 0
+last_fall = datetime.datetime.now() - datetime.timedelta(minutes = 1)
 
 while 1:
     try:
@@ -72,21 +85,28 @@ while 1:
 
         # print (info)
         data = info.split(",")
+        # print(data)
+        if len(data) > 20:
+            latitude = float(data[2].strip()) + random.uniform(-2, 2)
+            longitude = float(data[3].strip()) + random.uniform(-2, 2)
+            print("Found new location.")
+            continue
+
         if len(data) < 13:
             continue
 
-        # print(data)
+
         for i in range(9):
             data[i] = data[i].strip()
             # print(str(i) + " " + data[i])
 
         timestamp = data[0]
-        accel_x = data[2]
-        accel_y = data[3]
-        accel_z = data[4]
-        gyro_x = data[6]
-        gyro_y = data[7]
-        gyro_z = data[8]
+        accel_x = float(data[2])
+        accel_y = float(data[3])
+        accel_z = float(data[4])
+        gyro_x = float(data[6])
+        gyro_y = float(data[7])
+        gyro_z = float(data[8])
 
         temp_data = reorient(accel_x, accel_y, accel_z)
         temp_data.append(gyro_x)
@@ -98,7 +118,6 @@ while 1:
 
         while len(sensor_data) > window_size:
             sensor_data.pop(0)
-
         if index >= step_size and len(sensor_data) == window_size:
             t = threading.Thread(target=predict, args=(
                 np.asarray(sensor_data[:]),))
