@@ -69,6 +69,9 @@ sys.stdout.flush()
 
 cv = sklearn.model_selection.KFold(n_splits=10, random_state=None, shuffle=True)
 
+accuracy = np.zeros(10)
+counter = 0
+
 for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
@@ -79,8 +82,12 @@ for train_index, test_index in cv.split(X):
 
     print(conf)
     print('Accuracy Score :', sklearn.metrics.accuracy_score(Y_test, Y_pred))
+    accuracy[counter] = sklearn.metrics.accuracy_score(Y_test, Y_pred)
+    counter+=1
     print('Report : ')
     print(sklearn.metrics.classification_report(Y_test, Y_pred))
+
+print("average accuracy = " + str(np.mean(accuracy)))
 
 activity_classifier = sklearn.tree.DecisionTreeClassifier(criterion="entropy", max_depth=4)
 activity_classifier = activity_classifier.fit(X, Y)
